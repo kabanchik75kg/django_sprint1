@@ -1,10 +1,8 @@
-from typing import List, Dict
-
 from django.shortcuts import render
 from django.http import HttpResponseNotFound
 
 
-posts: List[Dict[str, str | int]] = [
+posts = [
     {
         'id': 0,
         'location': 'Остров отчаянья',
@@ -47,8 +45,7 @@ posts: List[Dict[str, str | int]] = [
     },
 ]
 
-posts_dict: Dict[str | int, Dict[str, str | int]] = {
-    post['id']: post for post in posts}
+posts_dict = {post['id']: post for post in posts}
 
 
 def index(request):
