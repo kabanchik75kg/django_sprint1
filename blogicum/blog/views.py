@@ -1,6 +1,10 @@
-from django.shortcuts import render
+from typing import List, Dict
 
-posts = [
+from django.shortcuts import render
+from django.http import HttpResponseNotFound
+
+
+posts: List[Dict[str, str | int]] = [
     {
         'id': 0,
         'location': 'Остров отчаянья',
@@ -43,23 +47,21 @@ posts = [
     },
 ]
 
+posts_dict: Dict[str | int, Dict[str, str | int]] = {
+    post['id']: post for post in posts}
+
 
 def index(request):
-    context = {
-        'posts': posts
-    }
-    return render(request, 'blog/index.html', context)
+    return render(request, 'blog/index.html', {'posts': posts_dict})
 
 
-def post_detail(request, id):
-    context = {
-        'post': posts[id]
-    }
-    return render(request, 'blog/detail.html', context)
+def post_detail(request, post_id):
+    if post_id in posts_dict:
+        return render(request, 'blog/detail.html',
+                      {'post': posts_dict[post_id]})
+    return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
-def category_posts(request, category_slug):
-    context = {
-        'category_slug': category_slug
-    }
-    return render(request, 'blog/category.html', context)
+def category_posts(request, post_category):
+    return render(request, 'blog/category.html',
+                  {'category_slug': post_category})
