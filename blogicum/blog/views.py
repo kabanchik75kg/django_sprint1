@@ -1,10 +1,10 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Union
 
 from django.shortcuts import render
-from django.http import HttpResponseNotFound
+from django.http import Http404
 
 
-posts: List[Dict[str, Any]] = [
+posts: List[Dict[str, Union[str, int]]] = [
     {
         'id': 0,
         'location': 'Остров отчаянья',
@@ -47,7 +47,8 @@ posts: List[Dict[str, Any]] = [
     },
 ]
 
-posts_dict: Dict[int, Dict[str, Any]] = {post['id']: post for post in posts}
+posts_dict: Dict[Union[str, int], Dict[str, Union[str, int]]] = {
+    post['id']: post for post in posts}
 
 
 def index(request):
@@ -55,10 +56,10 @@ def index(request):
 
 
 def post_detail(request, post_id):
-    if post_id in posts_dict:
-        return render(request, 'blog/detail.html',
-                      {'post': posts_dict[post_id]})
-    return HttpResponseNotFound('<h1>Page not found</h1>')
+    if post_id not in posts_dict:
+        raise Http404('<h1>Page not found</h1>')
+    return render(request, 'blog/detail.html',
+                  {'post': posts_dict[post_id]})
 
 
 def category_posts(request, post_category):
